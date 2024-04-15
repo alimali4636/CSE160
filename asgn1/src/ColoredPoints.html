@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Change a point color</title>
+  </head>
+
+  <body onload="main()">
+    <canvas id="webgl" width="400" height="400">
+    Please use a browser that supports "canvas"
+    </canvas>
+    <img id="triangleImage" src="https://cdn.discordapp.com/attachments/813860493273071686/1229322283068424215/IMG_0840.png?ex=662f4297&is=661ccd97&hm=313a7972ebbad161b014f90992dd3d9f71ed9a3d6801ecc605ba3f55cecc2d6e&" alt="Reference" style="max-width: 400px; max-height: 400px;">
+
+    <p>
+    <button type="button" id="clearButton">Clear Canvas</button>
+    <button type="button" id="drawingButton">My Drawing</button>
+    
+    <p>
+      <strong>Drawing Mode</strong>
+      <br>
+      <button type="button" id="pointButton">Point</button>
+      <button type="button" id="triangleButton">Triangle</button>
+      <button type="button" id="circleButton">Circle</button>
+
+    
+    <p>
+      <strong>Shape Color</strong>
+      <br>
+      Red <input type="range" min="0" max="100" value="0" class="slider" id="redSlide">
+      Green <input type="range" min="0" max="100" value="0" class="slider" id="greenSlide">
+      Blue <input type="range" min="0" max="100" value="0" class="slider" id="blueSlide">
+    <p>
+      <strong>Awesome Opacity Slider</strong>
+      <br>
+      Opacity <input type="range" min="0" max="100" value="100" class="slider" id="opacitySlide">
+
+    <p>
+      Shape Size <input type="range" min="5" max="40" value="0" class="slider" id="sizeSlide"> (Circles) Segment Count <input type="range" min="6" max="20" value="0" class="slider" id="segmentSlide">
+
+    <p>Ali Ali <br> almali@ucsc.edu</p>
+    <script src="../lib/webgl-utils.js"></script>
+    <script src="../lib/webgl-debug.js"></script>
+    <script src="../lib/cuon-utils.js"></script>
+    <script src="Point.js"></script>
+    <script src="Triangle.js"></script>
+    <script src="Circle.js"></script>
+    <script src="ColoredPoints.js"></script>
+  </body>
+</html>
