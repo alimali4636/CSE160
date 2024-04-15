@@ -221,11 +221,11 @@ function renderAllShapes(){
 function displayDrawing() {
   g_shapesList = [];
   for (let i = 0; i < drawingTriangles.length; i++) {
-    drawTriangle(drawingTriangles[i].vertices, drawingTriangles[i].color);
+    drawCrabTriangle(drawingTriangles[i].vertices, drawingTriangles[i].color);
   }
 }
 
-function drawTriangle(vertices, color) {
+function drawCrabTriangle(vertices, color) {
   const vertexBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
