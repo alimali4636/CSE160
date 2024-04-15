@@ -79,13 +79,9 @@ var FSHADER_SOURCE = `
   let g_selectedSegment = 10;
   let g_selectedType = POINT;
   let drawingTriangles = [
-    //reds
+    //Red
     { vertices: [-0.4, 0.0, .4, 0.0, 0.0, 0.2], color: [1.0, 0.0, 0.0, 1.0] },
     { vertices: [-0.4, 0.0, .4, 0.0, 0.0, -0.2], color: [1.0, 0.0, 0.0, 1.0] },
-    { vertices: [-0.15, 0.0, -.2, 0.0, -.15, 0.05], color: [0.0, 0.0, 0.0, 1.0] },
-    { vertices: [-0.15, 0.05, -.2, 0.05, -.2, 0.0], color: [0.0, 0.0, 0.0, 1.0] },
-    { vertices: [0.15, 0.0, .2, 0.0, .15, 0.05], color: [0.0, 0.0, 0.0, 1.0] },
-    { vertices: [0.15, 0.05, .2, 0.05, .2, 0.0], color: [0.0, 0.0, 0.0, 1.0] },
     { vertices: [0.2, -0.1, .2, -.2, .25, -0.1], color: [1.0, 0.0, 0.0, 1.0] },
     { vertices: [0.3, -0.05, .4, -.05, .3, -0.2], color: [1.0, 0.0, 0.0, 1.0] },
     { vertices: [-0.2, -0.1, -.2, -.2, -.25, -0.1], color: [1.0, 0.0, 0.0, 1.0] },
@@ -98,7 +94,13 @@ var FSHADER_SOURCE = `
     { vertices: [-0.425, 0.15, -.4, .4, -.6, 0.4], color: [1.0, 0.0, 0.0, 1.0] },
     { vertices: [0.6, 0.0, .8, .2, .45, 0.15], color: [1.0, 0.0, 0.0, 1.0] },
     { vertices: [0.425, 0.15, .4, .4, .6, 0.4], color: [1.0, 0.0, 0.0, 1.0] },
+    //Black
     { vertices: [-0.07, -0.05, .07, -0.05, 0.0, -0.1], color: [0.0, 0.0, 0.0, 1.0] },
+    { vertices: [-0.15, 0.0, -.2, 0.0, -.15, 0.05], color: [0.0, 0.0, 0.0, 1.0] },
+    { vertices: [-0.15, 0.05, -.2, 0.05, -.2, 0.0], color: [0.0, 0.0, 0.0, 1.0] },
+    { vertices: [0.15, 0.0, .2, 0.0, .15, 0.05], color: [0.0, 0.0, 0.0, 1.0] },
+    { vertices: [0.15, 0.05, .2, 0.05, .2, 0.0], color: [0.0, 0.0, 0.0, 1.0] },
+    //Yellow
     { vertices: [-1.0, -0.2, 1.0, -.2, -1.0, -1.0], color: [1.0, 0.8, 0.0, 1.0] },
     { vertices: [1.0, -0.2, -1.0, -1.0, 1.0, -1.0], color: [1.0, 0.8, 0.0, 1.0] },
     
@@ -218,7 +220,6 @@ function renderAllShapes(){
 
 function displayDrawing() {
   g_shapesList = [];
-  g_shapesList = []; // Optionally clear existing shapes
   for (let i = 0; i < drawingTriangles.length; i++) {
     drawTriangle(drawingTriangles[i].vertices, drawingTriangles[i].color);
   }
