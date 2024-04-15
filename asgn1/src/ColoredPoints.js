@@ -220,6 +220,7 @@ function renderAllShapes(){
 
 function displayDrawing() {
   g_shapesList = [];
+  renderAllShapes();
   for (let i = 0; i < drawingTriangles.length; i++) {
     drawCrabTriangle(drawingTriangles[i].vertices, drawingTriangles[i].color);
   }
