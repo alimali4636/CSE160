@@ -1,0 +1,200 @@
+<html>
+<head>
+    <title>Three.js Example</title>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three/examples/jsm/loaders/",
+            "three/examples/jsm/": "https://unpkg.com/three@0.163.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+
+<body>
+    <canvas id="c"></canvas>
+    <script type="module">
+        // Import THREE from a module CDN
+        import * as THREE from 'three';
+        // import {OrbitControls} from 'three/addons/OrbitControls.js';
+        import {OBJLoader} from 'three/addons/OBJLoader.js';
+        import {MTLLoader} from 'three/addons/MTLLoader.js';
+        function main() {
+            // Ask three.js to draw into our canvas
+            const canvas = document.querySelector('#c');
+            const renderer = new THREE.WebGLRenderer({antialias: true, canvas});
+    
+            // Camera
+            const fov = 75;
+            const aspect = 2;  // the canvas default
+            const near = 0.1;
+            const far = 15;
+            const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+            camera.position.z = 3;
+    
+            // Create scene
+            const scene = new THREE.Scene();
+            
+            // Create light
+            const color = 0xFFFFFF;
+            const intensity = 3;
+            const light = new THREE.DirectionalLight( color, intensity );
+            light.position.set( - 1, 2, 4 );
+            scene.add( light );
+
+            const hemlight = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
+            scene.add( hemlight );
+
+
+            // Create box geometry
+            const boxWidth = 1;
+            const boxHeight = 1;
+            const boxDepth = 1;
+            const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+            
+            // Function for making new cubes set to a color (MODIFY THIS TO WORK WITH ANY SHAPE)
+            function makeInstance( geometry, color, x ) {
+                // Create material
+                const material = new THREE.MeshPhongMaterial( { color } );
+                // Create cube with geometry and material
+                const cube = new THREE.Mesh( geometry, material );
+                // Add cube
+                scene.add( cube );
+
+                cube.position.x = x;
+
+                return cube;
+
+            }
+
+            // Custom textured cube
+            const loader = new THREE.TextureLoader();
+            const texture = loader.load( 'rat.png' );
+            texture.colorSpace = THREE.SRGBColorSpace;
+            
+            const material = new THREE.MeshPhongMaterial({
+            color: 0xFFFFFF,
+            map: texture,
+            });
+            const cube = new THREE.Mesh( geometry, material );
+            scene.add( cube );
+            cube.position.x = 0;
+            cube.position.y = -3;
+            cube.position.z = 5;
+
+            // Cylinder
+            const cylinderGeometry = new THREE.CylinderGeometry(.5, .5, 1, 16);
+            const cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x1E2F97 });
+            const cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+            scene.add(cylinder);
+            cylinder.position.x = -3;
+            cylinder.position.y = -3;
+            cylinder.position.z = 5;
+            
+            // Sphere
+            const sphereGeometry = new THREE.SphereGeometry(.5, 30, 30);
+            const sphereMaterial = new THREE.MeshPhongMaterial({ color: 0xBE1600 });
+            const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+            scene.add(sphere);
+            sphere.position.x = 3;
+            sphere.position.y = -3;
+            sphere.position.z = 5;
+
+
+            // Our shapes
+            const shapes = [
+                cube,
+                cylinder,
+                sphere,
+            ];
+            
+            function loadColorTexture( path ) {
+            const texture = loader.load( path );
+            texture.colorSpace = THREE.SRGBColorSpace;
+            return texture;
+            }
+
+            // Rotate
+            function render( time ) {
+
+                time *= 0.001; // convert time to seconds
+
+                shapes.forEach( ( shape, ndx ) => {
+
+                    const speed = 1 + ndx * .1;
+                    const rot = time * speed;
+                    shape.rotation.x = rot;
+                    shape.rotation.y = rot;
+
+                } );
+
+                renderer.render( scene, camera );
+
+                requestAnimationFrame( render );
+
+            }
+
+            requestAnimationFrame( render );
+
+
+            
+            // Load object
+            const mtlLoader = new MTLLoader();
+		    mtlLoader.load( 'https://threejs.org/manual/examples/resources/models/windmill/windmill.mtl', ( mtl ) => {
+			    mtl.preload();
+                mtl.materials.Material.side = THREE.DoubleSide;
+			const objLoader = new OBJLoader();
+			objLoader.setMaterials( mtl );
+			objLoader.load( 'https://threejs.org/manual/examples/resources/models/windmill/windmill.obj', ( root ) => {
+				scene.add( root );
+                root.position.set(0,-3,-1);
+                
+
+                // compute the box that contains all the stuff
+                // from root and below
+                const box = new THREE.Box3().setFromObject(root);
+                
+                const boxSize = box.getSize(new THREE.Vector3()).length();
+                const boxCenter = box.getCenter(new THREE.Vector3());
+
+                // set the camera to frame the box
+                frameArea(boxSize * 1.2, boxSize, boxCenter, camera);
+
+                root.rotation.y = -Math.PI/3;
+			} );
+		    } );
+            
+
+        }
+
+        // Function that adjusts camera to fit objects
+        function frameArea(sizeToFitOnScreen, boxSize, boxCenter, camera) {
+            const halfSizeToFitOnScreen = sizeToFitOnScreen * 0.5;
+            const halfFovY = THREE.MathUtils.degToRad(camera.fov * .5);
+            const distance = halfSizeToFitOnScreen / Math.tan(halfFovY);
+            
+            // compute a unit vector that points in the direction the camera is now
+            // from the center of the box
+            const direction = (new THREE.Vector3()).subVectors(camera.position, boxCenter).normalize();
+            
+            // move the camera to a position distance units way from the center
+            // in whatever direction the camera was from the center already
+            camera.position.copy(direction.multiplyScalar(distance).add(boxCenter));
+            
+            // pick some near and far values for the frustum that
+            // will contain the box.
+            camera.near = boxSize / 100;
+            camera.far = boxSize * 100;
+            
+            camera.updateProjectionMatrix();
+            
+            // point the camera to look at the center of the box
+            camera.lookAt(boxCenter.x, boxCenter.y, boxCenter.z);
+        }
+
+    
+        main();
+    </script>
+</body>
+</html>
