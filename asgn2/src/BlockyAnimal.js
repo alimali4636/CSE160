@@ -1,0 +1,268 @@
+// ColoredPoint.js (c) 2012 matsuda
+// Vertex shader program
+var VSHADER_SOURCE = ` 
+  attribute vec4 a_Position;
+  uniform mat4 u_ModelMatrix;
+  uniform mat4 u_GlobalRotateMatrix;
+  uniform float u_Size;
+  void main() {
+    gl_Position = u_GlobalRotateMatrix * u_ModelMatrix * a_Position;
+    gl_PointSize = u_Size;
+  }`
+
+// Fragment shader program
+var FSHADER_SOURCE = `
+  precision mediump float;
+  uniform vec4 u_FragColor;
+  void main() {
+    gl_FragColor = u_FragColor;
+  }`
+
+  // Global Variables
+  let canvas;
+  let gl;
+  let a_Position;
+  let u_FragColor;
+  let u_Size;
+  let u_ModelMatrix;
+  let u_GlobalRotateMatrix;
+
+  function setupWebGL(){
+        // Retrieve <canvas> element
+    canvas = document.getElementById('webgl');
+
+    // Get the rendering context for WebGL
+    // gl = getWebGLContext(canvas);
+    gl = canvas.getContext("webgl", { preserveDrawingBuffer: true});
+    if (!gl) {
+      console.log('Failed to get the rendering context for WebGL');
+      return;
+    }
+    gl.enable(gl.DEPTH_TEST);
+  }
+
+  function connectVariablesToGLSL(){
+     // Initialize shaders
+    if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
+      console.log('Failed to intialize shaders.');
+      return;
+    }
+
+    // Get the storage location of a_Position
+    a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+    if (a_Position < 0) {
+      console.log('Failed to get the storage location of a_Position');
+      return;
+    }
+
+    // Get the storage location of u_FragColor
+    u_FragColor = gl.getUniformLocation(gl.program, 'u_FragColor');
+    if (!u_FragColor) {
+      console.log('Failed to get the storage location of u_FragColor');
+      return;
+    }
+
+    // Get the storage location of u_ModelMatrix
+    u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix')
+    if(!u_ModelMatrix) {
+      console.log('Failed to get the storage location of u_ModelMatrix');
+      return;
+    }
+
+    // Get the storage location of u_GlobalRotateMatrix
+    u_GlobalRotateMatrix = gl.getUniformLocation(gl.program, 'u_GlobalRotateMatrix')
+    if(!u_GlobalRotateMatrix) {
+      console.log('Failed to get the storage location of u_GlobalRotateMatrix');
+      return;
+    }
+
+    // Get the storage location of u_FragColor
+    u_Size = gl.getUniformLocation(gl.program, 'u_Size');
+    if (!u_Size) {
+      console.log('Failed to get the storage location of u_Size');
+      return;
+    }
+  }
+  // Constants
+  const POINT = 0;
+  const TRIANGLE = 1;
+  const CIRCLE = 2;
+
+  // UI Globals
+  let g_selectedColor = [1.0, 1.0, 1.0, 1.0];
+  let g_selectedOpacity = 1.0;
+  let g_selectedSize = 5;
+  let g_selectedSegment = 10;
+  let g_selectedType = POINT;
+  let g_globalAngle = 0;
+
+  // Set up actions for HTML UI elements
+  function addActionsForHTMLUI(){
+
+    //Other Slider Events
+    document.getElementById('angleSlide').addEventListener('mousemove', function() {g_globalAngle = this.value; renderAllShapes(); });
+    
+  }
+
+function main() {
+
+  setupWebGL();
+
+  connectVariablesToGLSL();
+
+  addActionsForHTMLUI()
+
+  // Specify the color for clearing <canvas>
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+
+  // Clear <canvas>
+  // gl.clear(gl.COLOR_BUFFER_BIT);
+  renderAllShapes();
+}
+
+function renderAllShapes(){
+
+  var globalRotMat = new Matrix4().rotate(g_globalAngle,0,1,0);
+  gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
+
+  // Clear <canvas>
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  var ear = new TriPrism();
+  ear.color = [0.0,.85,0.7,1.0];
+  ear.matrix.translate(-.7, .33, -.575);
+  ear.matrix.scale(.2,.2, .06);
+  ear.matrix.rotate(10,0,1,0);
+  ear.render();
+
+  var earback = new TriPrism();
+  earback.color = [0.0,.85,0.7,1.0];
+  earback.matrix.translate(-.68, .33, -.56);
+  earback.matrix.scale(.18,.15, .12);
+  earback.matrix.rotate(10,0,1,0);
+  earback.render();
+
+  var ear2 = new TriPrism();
+  ear2.color = [0.0,.85,0.7,1.0];
+  ear2.matrix.translate(-.35, .33, -.575);
+  ear2.matrix.scale(.2,.2, .06);
+  ear2.matrix.rotate(-10,0,1,0);
+  ear2.render();
+
+  var earback2 = new TriPrism();
+  earback2.color = [0.0,.85,0.7,1.0];
+  earback2.matrix.translate(-.36, .33, -.56);
+  earback2.matrix.scale(.18,.15, .12);
+  earback2.matrix.rotate(-10,0,1,0);
+  earback2.render();
+
+  var head = new Cube();
+  head.color = [0.0,.85,0.7,1.0];
+  head.matrix.translate(-.725, -.1, -.7);
+  head.matrix.scale(.6,.45, .85);
+  head.render();
+
+  var snout = new Cube();
+  snout.color = [0.25,.05,0.05,1.0];
+  snout.matrix.translate(-.495, -.045, -.9);
+  snout.matrix.scale(.14,.10, .85);
+  snout.render();
+
+  var snout1 = new Cube();
+  snout1.color = [0.25,.05,0.05,1.0];
+  snout1.matrix.translate(-.525, -.02, -.9);
+  snout1.matrix.rotate(-10,1,0,0);
+  snout1.matrix.scale(.2,.10, .85);
+  snout1.render();
+
+  var nose = new Cube();
+  nose.color = [0.1,.015,0.05,1.0];
+  nose.matrix.translate(-.47, 0.03, -.925);
+  nose.matrix.rotate(-5,1,0,0);
+  nose.matrix.scale(.09,.05, .1);
+  nose.render();
+
+  //SNOUT UPWARD TRIANGLE
+  var snout2 = new TriPrism();
+  snout2.color = [0.25,.05,0.05,1.0];
+  snout2.matrix.translate(-.525, .1, -.8);
+  snout2.matrix.rotate(70,1,0,0);
+  snout2.matrix.scale(.2,.26, .06);
+  snout2.render();
+
+  //SNOUT UPWARD TRIANGLE2
+  var snout4 = new TriPrism();
+  snout4.color = [0.25,.05,0.05,1.0];
+  snout4.matrix.translate(-.545, .02, -.8);
+  snout4.matrix.rotate(40,1,0,0);
+  snout4.matrix.rotate(40,0,1,0);
+  snout4.matrix.rotate(40,0,0,1);
+  snout4.matrix.scale(.12,.26, .06);
+  snout4.render();
+
+  //SNOUT UPWARD TRIANGLE2
+  var snout5 = new TriPrism();
+  snout5.color = [0.25,.05,0.05,1.0];
+  snout5.matrix.translate(-.365, .12, -.8);
+  snout5.matrix.rotate(40,1,0,0);
+  snout5.matrix.rotate(-40,0,1,0);
+  snout5.matrix.rotate(-40,0,0,1);
+  snout5.matrix.scale(.12,.26, .06);
+  snout5.render();
+
+  //SNOUT GREEN FUR TRIANGLE
+  var snout3 = new TriPrism();
+  snout3.color = [0.0,.85,0.7,1.0];
+  snout3.matrix.translate(-.5, .1, -.65);
+  snout3.matrix.rotate(-110,1,0,0);
+  snout3.matrix.scale(.15,.18, .06);
+  snout3.render();
+
+  var body = new Cube();
+  body.color = [0.0,.9,0.65,1.0];
+  body.matrix.translate(-.85, -.25, -.4);
+  body.matrix.scale(.9,.8, .85);
+  body.render();
+
+  var body1 = new Cube();
+  body1.color = [0.0,.9,0.55,1.0];
+  body1.matrix.translate(-.7, -.2, -.25);
+  body1.matrix.scale(.8,.8, .85);
+  body1.render();
+
+  var body2 = new Cube();
+  body2.color = [0,.9,0.40,1];
+  body2.matrix.translate(-.6, -.4, 0);
+  body2.matrix.scale(.8,.7, .75);
+  body2.render();
+
+  var body3 = new Cube();
+  body3.color = [.2,.87,.3,1];
+  body3.matrix.translate(-.35, -.55, .2);
+  body3.matrix.scale(.7,.6, .65);
+  body3.render();
+
+  var body4 = new Cube();
+  body4.color = [.4,.87,.2,1];
+  body4.matrix.translate(-.2, -.655, .25);
+  body4.matrix.scale(.6,.4, .65);
+  body4.render();
+
+  var body5 = new Cube();
+  body5.color = [.50,.9,.1,1];
+  body5.matrix.translate(.1, -.7, .3);
+  body5.matrix.scale(.4,.3, .65);
+  body5.render();
+
+  var body6 = new Cube();
+  body6.color = [.65,.9,0,1];
+  body6.matrix.translate(.2, -.75, .4);
+  body6.matrix.scale(.4,.3, .5);
+  body6.render();
+
+  var body7 = new Cube();
+  body7.color = [.85,1,0,1];
+  body7.matrix.translate(.45, -.775, .45);
+  body7.matrix.scale(.35,.125, .35);
+  body7.render();
+}
