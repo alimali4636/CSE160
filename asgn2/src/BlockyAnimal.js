@@ -96,7 +96,7 @@ var FSHADER_SOURCE = `
   let g_tailtipAnim = false;
   let g_tailtip2Anim = false;
   let g_tailtip2Angle = 0;
-  let g_idleAnim = false ;
+  let g_idleAnim = true ;
   let g_idleYVal = 0;
   let g_idleYValHead = 0;
 
