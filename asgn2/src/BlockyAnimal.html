@@ -2,7 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Change a point color</title>
+    <title>Asgn 2 - Blocky Animal</title>
+    <style>
+      body {
+          background-color: #8a0e0e;
+          color: #ffffff;
+      }
+  </style>
   </head>
 
   <body onload="main()">
@@ -10,14 +16,20 @@
     Please use a browser that supports "canvas"
     </canvas>
 
+    <p style="font-size: 30px;"><b><i>Here comes daredevil!</i></b></p>
     <p>
     Camera Angle <input type="range" min="0" max="360" value="0" class="slider" id="angleSlide">
+    Idle Animation <button type="button" id="idleAnimOn">ON</button> <button type="button" id="idleAnimOff">OFF</button>
+    FPS: <span id="fpsCount">0</span></p>
     <p>
     Tail Slider <input type="range" min="0" max="30" value="0" class="slider" id="tailSlide">
     Animation <button type="button" id="tailAnimOn">ON</button> <button type="button" id="tailAnimOff">OFF</button>
     <p>
     Tail Tip Slider <input type="range" min="0" max="45" value="0" class="slider" id="tailtipSlide">
     Animation <button type="button" id="tailtipAnimOn">ON</button> <button type="button" id="tailtipAnimOff">OFF</button>
+    <p>
+    Tail Tippity Tip Slider <input type="range" min="0" max="45" value="0" class="slider" id="tailtip2Slide">
+    Animation <button type="button" id="tailtip2AnimOn">ON</button> <button type="button" id="tailtip2AnimOff">OFF</button>
 
     <p>Ali Ali <br> almali@ucsc.edu</p>
     <script src="../lib/webgl-utils.js"></script>
