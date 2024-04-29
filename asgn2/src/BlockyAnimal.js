@@ -95,13 +95,16 @@ var FSHADER_SOURCE = `
   let g_selectedSegment = 10;
   let g_selectedType = POINT;
   let g_globalAngle = 0;
+  let g_tailAngle = 0;
+  let g_tailtipAngle = 0;
 
   // Set up actions for HTML UI elements
   function addActionsForHTMLUI(){
 
     //Other Slider Events
     document.getElementById('angleSlide').addEventListener('mousemove', function() {g_globalAngle = this.value; renderAllShapes(); });
-    
+    document.getElementById('tailSlide').addEventListener('mousemove', function() {g_tailAngle = this.value; renderAllShapes(); });
+    document.getElementById('tailtipSlide').addEventListener('mousemove', function() {g_tailtipAngle = this.value; renderAllShapes(); });
   }
 
 function main() {
@@ -117,7 +120,20 @@ function main() {
 
   // Clear <canvas>
   // gl.clear(gl.COLOR_BUFFER_BIT);
+  requestAnimationFrame(tick);
+
+}
+
+var g_startTime = performance.now() / 1000.0;
+var g_seconds = performance.now() / 1000.0 - g_startTime;
+
+function tick(){
+  g_seconds = performance.now() / 1000.0 - g_startTime;
+  console.log(g_seconds);
+
   renderAllShapes();
+
+  requestAnimationFrame(tick);
 }
 
 function renderAllShapes(){
@@ -135,6 +151,13 @@ function renderAllShapes(){
   ear.matrix.rotate(10,0,1,0);
   ear.render();
 
+  var earfur = new TriPrism();
+  earfur.color = [0.25,.05,0.05,1.0];
+  earfur.matrix.translate(-.67, .33, -.578);
+  earfur.matrix.scale(.15,.15, .06);
+  earfur.matrix.rotate(10,0,1,0);
+  earfur.render();
+
   var earback = new TriPrism();
   earback.color = [0.0,.85,0.7,1.0];
   earback.matrix.translate(-.68, .33, -.56);
@@ -143,11 +166,18 @@ function renderAllShapes(){
   earback.render();
 
   var ear2 = new TriPrism();
-  ear2.color = [0.0,.85,0.7,1.0];
-  ear2.matrix.translate(-.35, .33, -.575);
-  ear2.matrix.scale(.2,.2, .06);
+  ear2.color = [0.25,.05,0.05,1.0];
+  ear2.matrix.translate(-.33, .33, -.578);
+  ear2.matrix.scale(.15,.15, .06);
   ear2.matrix.rotate(-10,0,1,0);
   ear2.render();
+
+  var ear2fur = new TriPrism();
+  ear2fur.color = [0.0,.85,0.7,1.0];
+  ear2fur.matrix.translate(-.35, .33, -.575);
+  ear2fur.matrix.scale(.2,.2, .06);
+  ear2fur.matrix.rotate(-10,0,1,0);
+  ear2fur.render();
 
   var earback2 = new TriPrism();
   earback2.color = [0.0,.85,0.7,1.0];
@@ -182,6 +212,22 @@ function renderAllShapes(){
   nose.matrix.scale(.09,.05, .1);
   nose.render();
 
+  var eye1 = new TriPrism();
+  eye1.color = [0.8,.8,0.8,1.0];
+  eye1.matrix.translate(-.53, 0.13, -.73);
+  eye1.matrix.rotate(30,0,0,1)
+  eye1.matrix.rotate(6,1,0,0)
+  eye1.matrix.scale(.032,.052, .05);
+  eye1.render();
+
+  var eye2 = new TriPrism();
+  eye2.color = [0.8,.8,0.8,1.0];
+  eye2.matrix.translate(-.345, 0.145, -.736);
+  eye2.matrix.rotate(-30,0,0,1)
+  eye2.matrix.rotate(10,1,0,0)
+  eye2.matrix.scale(.032,.052, .05);
+  eye2.render();
+
   //SNOUT UPWARD TRIANGLE
   var snout2 = new TriPrism();
   snout2.color = [0.25,.05,0.05,1.0];
@@ -189,6 +235,23 @@ function renderAllShapes(){
   snout2.matrix.rotate(70,1,0,0);
   snout2.matrix.scale(.2,.26, .06);
   snout2.render();
+
+  //SNOUT AT THE EYE AREA
+  var snout6 = new TriPrism();
+  snout6.color = [0.25,.05,0.05,1.0];
+  snout6.matrix.translate(-.53, .105, -.75);
+  snout6.matrix.rotate(25,1,0,0);
+  snout6.matrix.rotate(38,0,0,1);
+  snout6.matrix.scale(.06,.26, .06);
+  snout6.render();
+
+  var snout7 = new TriPrism();
+  snout7.color = [0.25,.05,0.05,1.0];
+  snout7.matrix.translate(-.405, .105, -.76);
+  snout7.matrix.rotate(30,1,0,0);
+  snout7.matrix.rotate(-38,0,0,1);
+  snout7.matrix.scale(.079,.26, .06);
+  snout7.render();
 
   //SNOUT UPWARD TRIANGLE2
   var snout4 = new TriPrism();
@@ -218,15 +281,29 @@ function renderAllShapes(){
   snout3.matrix.scale(.15,.18, .06);
   snout3.render();
 
+  //RED TRIANGLE
+  var forehead = new TriPrism();
+  forehead.color = [.8,.2,0.2,1.0];
+  forehead.matrix.translate(-.473, .2, -.71);
+  // snout3.matrix.rotate(180,1,0,0);
+  forehead.matrix.scale(.1,.08,.08);
+  forehead.render();
+  var forehead2 = new TriPrism();
+  forehead2.color = [0.0,.85,0.7,1.0];
+  forehead2.matrix.translate(-.458, .21, -.711);
+  // snout3.matrix.rotate(180,1,0,0);
+  forehead2.matrix.scale(.07,.05,.08);
+  forehead2.render();
+
   var body = new Cube();
   body.color = [0.0,.9,0.65,1.0];
-  body.matrix.translate(-.85, -.25, -.4);
+  body.matrix.translate(-.865, -.32, -.4);
   body.matrix.scale(.9,.8, .85);
   body.render();
 
   var body1 = new Cube();
   body1.color = [0.0,.9,0.55,1.0];
-  body1.matrix.translate(-.7, -.2, -.25);
+  body1.matrix.translate(-.7, -.28, -.25);
   body1.matrix.scale(.8,.8, .85);
   body1.render();
 
@@ -245,24 +322,48 @@ function renderAllShapes(){
   var body4 = new Cube();
   body4.color = [.4,.87,.2,1];
   body4.matrix.translate(-.2, -.655, .25);
+  body4.matrix.rotate(g_tailAngle,0, 1, 0);
+  body4.matrix.rotate(10*Math.sin(g_seconds),0, 1, 0);
+  body4Coordinates = new Matrix4(body4.matrix);
   body4.matrix.scale(.6,.4, .65);
   body4.render();
 
   var body5 = new Cube();
   body5.color = [.50,.9,.1,1];
-  body5.matrix.translate(.1, -.7, .3);
+  body5.matrix = body4Coordinates;
+  body5.matrix.translate(.35, -.1, .1);
+  body5Coordinates = new Matrix4(body5.matrix);
   body5.matrix.scale(.4,.3, .65);
   body5.render();
 
   var body6 = new Cube();
   body6.color = [.65,.9,0,1];
-  body6.matrix.translate(.2, -.75, .4);
-  body6.matrix.scale(.4,.3, .5);
+  body6.matrix = body5Coordinates;
+  body6.matrix.translate(.2, -.05, .1);
+  body6.matrix.rotate(g_tailtipAngle,0, 1, 0);
+  body6.matrix.rotate(35*Math.sin(g_seconds),0, 1, 0);
+  body6Coordinates = new Matrix4(body6.matrix);
+  body6.matrix.scale(.3,.2, .5);
   body6.render();
 
   var body7 = new Cube();
-  body7.color = [.85,1,0,1];
-  body7.matrix.translate(.45, -.775, .45);
+  body7.color = [.75,.9,0,1];
+  body7.matrix = body6Coordinates;
+  body7.matrix.translate(.1, -0.05, .05);
+  body7Coordinates = new Matrix4(body7.matrix);
   body7.matrix.scale(.35,.125, .35);
   body7.render();
+
+  var body8 = new Cube();
+  body8.color = [.8,.95,0,1];
+  body8.matrix = body7Coordinates;
+  body8.matrix.translate(.3, .1, .05);
+  body8.matrix.scale(.17,.07, .25);
+  body8.render();
+
+  // var body9 = new Cube();
+  // body9.color = [.8,.95,0,1];
+  // body9.matrix.translate(.775, -.64, .55);
+  // body9.matrix.scale(.08,.04, .15);
+  // body9.render();
 }
