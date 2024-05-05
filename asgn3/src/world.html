@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Asgn 2 - Virtual World</title>
+    <style>
+      body {
+          background-color: #eed676;
+          color: #000000;
+      }
+  </style>
+  </head>
+
+  <body onload="main()">
+    <canvas id="webgl" width="400" height="400">
+    Please use a browser that supports "canvas"
+    </canvas>
+
+    <p>
+    Camera Angle <input type="range" min="0" max="360" value="0" class="slider" id="angleSlide">
+    Idle Animation <button type="button" id="idleAnimOn">ON</button> <button type="button" id="idleAnimOff">OFF</button>
+    FPS: <span id="fpsCount">0</span></p>
+    <p>
+    Tail Slider <input type="range" min="0" max="30" value="0" class="slider" id="tailSlide">
+    Animation <button type="button" id="tailAnimOn">ON</button> <button type="button" id="tailAnimOff">OFF</button>
+    <p>
+    Tail Tip Slider <input type="range" min="0" max="45" value="0" class="slider" id="tailtipSlide">
+    Animation <button type="button" id="tailtipAnimOn">ON</button> <button type="button" id="tailtipAnimOff">OFF</button>
+    <p>
+    Tail Tippity Tip Slider <input type="range" min="0" max="45" value="0" class="slider" id="tailtip2Slide">
+    Animation <button type="button" id="tailtip2AnimOn">ON</button> <button type="button" id="tailtip2AnimOff">OFF</button>
+
+    <p>Ali Ali <br> almali@ucsc.edu</p>
+    <script src="../lib/webgl-utils.js"></script>
+    <script src="../lib/webgl-debug.js"></script>
+    <script src="../lib/cuon-utils.js"></script>
+    <script src="../lib/cuon-matrix-cse160.js"></script>
+    <script src="Point.js"></script>
+    <script src="Triangle.js"></script>
+    <script src="Circle.js"></script>
+    <script src="Cube.js"></script>
+    <script src="TriangularPrism.js"></script>
+    <script src="world.js"></script>
+  </body>
+</html>
