@@ -180,14 +180,20 @@ var FSHADER_SOURCE = `
     document.getElementById('idleAnimOff').onclick = function() {g_idleAnim = false;};
   }
 
+  var camera;
+
 function main() {
 
   setupWebGL();
 
   connectVariablesToGLSL();
 
+  camera = new Camera(canvas);
+  
   updateFPS();
   addActionsForHTMLUI();
+  
+  document.onkeydown = keydown;
 
   initTextures();
 
@@ -199,7 +205,6 @@ function main() {
   renderAllShapes();
 
   // Clear <canvas>
-  // gl.clear(gl.COLOR_BUFFER_BIT);
   requestAnimationFrame(tick);
 
 }
@@ -276,6 +281,30 @@ function updateFPS() {
     requestAnimationFrame(updateFPS);
 }
 
+function keydown(ev) {
+  switch (ev.keyCode) {
+    case 87:
+      camera.moveForward(.5); //PRESS W
+      break;
+    case 83:
+      camera.moveBackward(.5); //PRESS S
+      break;
+    case 65:
+      camera.moveLeft(.5); //PRESS A
+      break;
+    case 68:
+      camera.moveRight(.5); //PRESS A
+      break;
+    case 81:
+      camera.panLeft(5); //PRESS Q
+      break;
+    case 69:
+      camera.panRight(5); //PRESS E
+      break;
+  }
+  renderAllShapes();
+}
+
 function updateAnimationAngles() {
   if (g_tailAnim) {
     g_tailAngle = (10*Math.sin(g_seconds));
@@ -306,14 +335,18 @@ function tick(){
   requestAnimationFrame(tick);
 }
 
+var g_eye = [0,0,3];
+var g_at = [0,0,-100];
+var g_up = [0,1,0];
+
 function renderAllShapes(){
 
-  var projMat = new Matrix4();
-  projMat.setPerspective(90, canvas.width / canvas.height, 1, 100);
+  var projMat = camera.projectionMatrix;
+  // projMat.setPerspective(50, canvas.width / canvas.height, 1, 100);
   gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMat.elements);
 
-  var viewMat = new Matrix4();
-  viewMat.setLookAt(0, 1, 3, 0, 0, -100, 0, 1, 0);
+  var viewMat = camera.viewMatrix;
+  // viewMat.setLookAt(g_eye[0], g_eye[1], g_eye[2], g_at[0], g_at[1], g_at[2], g_up[0], g_up[1], g_up[2]);
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
 
   var globalRotMat = new Matrix4().rotate(g_globalAngle,0,1,0);
