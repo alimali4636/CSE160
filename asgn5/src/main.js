@@ -199,9 +199,16 @@ function main() {
     scene.add(speck5);
     scene.add(speck6);
 
-    const groundGeometry = new THREE.BoxGeometry(20, 20, 50);
+    const groundGeometry = new THREE.BoxGeometry(10, 20, 50);
     const groundobj = makeInstance(groundGeometry, 0x5C4033, 0, -15, 20);
     scene.add(groundobj);
+    const grassGeometry = new THREE.BoxGeometry(700, 19.9, 50);
+    const grassobj = makeInstance(grassGeometry, 0x87cf44, 0, -15, 20);
+    scene.add(grassobj);
+    const cementGeometry = new THREE.BoxGeometry(700, 19.8, 500);
+    const cementobj = makeInstance(cementGeometry, 0x7d8077, 0, -15, 20);
+    scene.add(cementobj);
+    
 
 
     // Our shapes
@@ -247,33 +254,77 @@ function main() {
     requestAnimationFrame( render );
 
 
-    
+    const treePositions = [
+        { x: 0, y: -5, z: -2 },
+        { x: 5, y: -5, z: -3 },
+        { x: -5, y: -5, z: -1 },
+        { x: 15, y: -5, z: -2 },
+        { x: -15, y: -5, z: -1 },
+        { x: 25, y: -5, z: -4 },
+        { x: -25, y: -5, z: -4 },
+        { x: 5, y: -5, z: -10 },
+        { x: -5, y: -5, z: -10 },
+        { x: 15, y: -5, z: -8 },
+        { x: -15, y: -5, z: -8 },
+        { x: 25, y: -5, z: -8 },
+        { x: -25, y: -5, z: -8 },
+        { x: 35, y: -5, z: -12 },
+        { x: -35, y: -5, z: -12 },
+        { x: 0, y: -5, z: -16 },
+        { x: 5, y: -5, z: -16 },
+        { x: -5, y: -5, z: -16 },
+        { x: 15, y: -5, z: -16 },
+        { x: -15, y: -5, z: -16 },
+        { x: 25, y: -5, z: -16 },
+        { x: -25, y: -5, z: -16 },
+        { x: 35, y: -5, z: -16 },
+        { x: -35, y: -5, z: -16 },
+        { x: 45, y: -5, z: -16 },
+        { x: -45, y: -5, z: -16 }
+    ];
+
     // Load object
     const mtlLoader = new MTLLoader();
-    mtlLoader.load( 'https://threejs.org/manual/examples/resources/models/windmill/windmill.mtl', ( mtl ) => {
+    mtlLoader.load('../lib/Lowpoly_tree_sample.mtl', (mtl) => {
         mtl.preload();
-        mtl.materials.Material.side = THREE.DoubleSide;
-    const objLoader = new OBJLoader();
-    objLoader.setMaterials( mtl );
-    objLoader.load( 'https://threejs.org/manual/examples/resources/models/windmill/windmill.obj', ( root ) => {
-        scene.add( root );
-        root.position.set(0,-5,-1);
-        
 
-        // compute the box that contains all the stuff
-        // from root and below
-        const box = new THREE.Box3().setFromObject(root);
-        
-        const boxSize = box.getSize(new THREE.Vector3()).length();
-        const boxCenter = box.getCenter(new THREE.Vector3());
+        // check if materials exist
+        // if (mtl.materials.Material) {
+        //     mtl.materials.Material.side = THREE.DoubleSide;
+        // }
+        const objLoader = new OBJLoader();
+        objLoader.setMaterials(mtl);
 
-        // set the camera to frame the box
-        frameArea(boxSize * 1.2, boxSize, boxCenter, camera);
+        for (let i = 0; i < treePositions.length; i++) {
+            const pos = treePositions[i];
+            objLoader.load('../lib/Lowpoly_tree_sample.obj', (root) => {
+                scene.add(root);
+                root.position.set(pos.x, pos.y, pos.z);
+                // compute the box that contains all the stuff
+                // from root and below
+                const box = new THREE.Box3().setFromObject(root);
+                const boxSize = box.getSize(new THREE.Vector3()).length();
+                const boxCenter = box.getCenter(new THREE.Vector3());
 
-        root.rotation.y = -Math.PI/3;
-    } );
-    } );
-    
+                frameArea(boxSize * 1.2, boxSize, boxCenter, camera);
+
+                root.rotation.y = -Math.PI / i+1;
+            });
+        }
+    });
+
+    const mtlLoaderTemple = new MTLLoader();
+    mtlLoaderTemple.load('../lib/Japanese_Temple.mtl', (mtl) => {
+        mtl.preload();
+        const objLoaderTemple = new OBJLoader();
+        objLoaderTemple.setMaterials(mtl);
+        objLoaderTemple.load('../lib/Japanese_Temple.obj', (root) => {
+            scene.add(root);
+            root.position.set(0, -5.2, 60);
+            root.rotation.y = Math.PI;
+        });
+    });
+
     const orbControls = new OrbitControls(camera, renderer.domElement);
     orbControls.target.set(0,0,0);
     orbControls.update();
